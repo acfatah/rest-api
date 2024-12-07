@@ -7,6 +7,7 @@ import httpStatus from 'http-status'
 import {
   errorConverter,
   errorHandler,
+  jwtErrorHandler,
   logger,
 } from './middlewares'
 import routes from './routes'
@@ -32,9 +33,10 @@ app.use(compression())
 app.use(cors())
 app.options('*', cors())
 
-// TODO: JWT authentication
-
 app.use(routes)
+
+// JWT authentication
+app.use(jwtErrorHandler)
 
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {
