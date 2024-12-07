@@ -8,5 +8,14 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     include: ['tests/**/*.spec.js'],
+    coverage: {
+      exclude: [
+        'esbuild.config.cjs',
+        'eslint.config.js',
+        'vitest.config.js',
+        'dist/**',
+        'tests/**',
+      ],
+    },
   },
 })
