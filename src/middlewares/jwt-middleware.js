@@ -24,10 +24,10 @@ export const jwtMiddleware = expressjwt({
   },
 })
 
-export function jwtErrorHandler(error, req, res, next) {
-  if (error.name === 'UnauthorizedError') {
+export function jwtErrorHandler(err, req, res, next) {
+  if (err.name === 'UnauthorizedError') {
     return res.status(401).json({ message: 'Unauthorized' })
   }
 
-  next()
+  next(err)
 }
