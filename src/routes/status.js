@@ -1,5 +1,6 @@
 import process from 'node:process'
 import express from 'express'
+import httpStatus from 'http-status'
 
 const router = express.Router()
 
@@ -12,12 +13,12 @@ router.get('/status', (req, res) => {
   }
   try {
     // Add any additional checks (e.g., database connection)
-    res.status(200).json(healthCheck)
+    res.status(httpStatus.OK).json(healthCheck)
   }
   catch (error) {
     healthCheck.status = 'unhealthy'
     healthCheck.error = error.message
-    res.status(503).json(healthCheck)
+    res.status(httpStatus.SERVICE_UNAVAILABLE).json(healthCheck)
   }
 })
 

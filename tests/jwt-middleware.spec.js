@@ -1,3 +1,4 @@
+import httpStatus from 'http-status'
 import jwt from 'jsonwebtoken'
 import request from 'supertest'
 import { describe, expect, it } from 'vitest'
@@ -7,7 +8,7 @@ describe('jwt-middleware', () => {
   it('should return a 401 status and a JSON response if no authorization header is provided', async () => {
     const res = await request(app).get('/protected')
 
-    expect(res.status).toBe(401)
+    expect(res.status).toBe(httpStatus.UNAUTHORIZED)
     expect(res.body).toEqual({
       message: 'Unauthorized',
     })
@@ -18,7 +19,7 @@ describe('jwt-middleware', () => {
       .get('/protected')
       .set('Authorization', 'Bearer invalid')
 
-    expect(res.status).toBe(401)
+    expect(res.status).toBe(httpStatus.UNAUTHORIZED)
     expect(res.body).toEqual({
       message: 'Unauthorized',
     })
@@ -35,13 +36,13 @@ describe('jwt-middleware', () => {
       .send({ username: user.username, password: user.password })
 
     expect(loginResponse.body.token).toBeDefined()
-    expect(loginResponse.status).toBe(200)
+    expect(loginResponse.status).toBe(httpStatus.OK)
 
     const res = await request(app)
       .get('/protected')
       .set('Authorization', `Bearer ${token}`)
 
-    expect(res.status).toBe(200)
+    expect(res.status).toBe(httpStatus.OK)
     expect(res.body).toEqual({
       message: 'Protected route',
     })
@@ -54,13 +55,11 @@ describe('jwt-middleware', () => {
       .post('/api/v1/auth/login')
       .send({ username: user.username, password: user.password })
 
-    expect(res.status).toBe(401)
+    expect(res.status).toBe(httpStatus.UNAUTHORIZED)
     expect(res.body).toEqual({
       message: 'Invalid credentials',
     })
   })
-
-  // TODO: test refresh token
 })
 
 describe('jwt-refresh-token', () => {
@@ -78,7 +77,7 @@ describe('jwt-refresh-token', () => {
       token = loginResponse.body.token
       refreshToken = loginResponse.headers['set-cookie'][0].split(';')[0].split('=')[1]
 
-      expect(loginResponse.status).toBe(200)
+      expect(loginResponse.status).toBe(httpStatus.OK)
       expect(token).toBeDefined()
       expect(refreshToken).toBeDefined()
 
@@ -88,7 +87,7 @@ describe('jwt-refresh-token', () => {
 
       newToken = refreshTokenResponse.body.token
 
-      expect(refreshTokenResponse.status).toBe(200)
+      expect(refreshTokenResponse.status).toBe(httpStatus.OK)
       expect(newToken).toBeDefined()
     })
 

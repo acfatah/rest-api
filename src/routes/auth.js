@@ -1,5 +1,6 @@
 import process from 'node:process'
 import express from 'express'
+import httpStatus from 'http-status'
 import {
   authenticateUser,
   generateAccessToken,
@@ -23,7 +24,7 @@ router.post('/login', (req, res) => {
     res.json({ token })
   }
   else {
-    res.status(401).json({ message: 'Invalid credentials' })
+    res.status(httpStatus.UNAUTHORIZED).json({ message: 'Invalid credentials' })
   }
 })
 
@@ -37,7 +38,7 @@ router.post('/refresh-token', (req, res) => {
     res.json({ token: newToken })
   }
   catch (error) {
-    res.status(403).json({ message: error.message })
+    res.status(httpStatus.FORBIDDEN).json({ message: error.message })
   }
 })
 
