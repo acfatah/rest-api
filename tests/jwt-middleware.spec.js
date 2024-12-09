@@ -62,3 +62,39 @@ describe('jwt-middleware', () => {
 
   // TODO: test refresh token
 })
+
+describe('jwt-refresh-token', () => {
+  describe('the POST /api/v1/auth/refresh-token', () => {
+    const user = { username: 'admin', password: 'password' }
+    let token
+    let refreshToken
+    let newToken
+
+    it('should return a 200 status and a new token', async () => {
+      const loginResponse = await request(app)
+        .post('/api/v1/auth/login')
+        .send({ username: user.username, password: user.password })
+
+      token = loginResponse.body.token
+      refreshToken = loginResponse.headers['set-cookie'][0].split(';')[0].split('=')[1]
+
+      expect(loginResponse.status).toBe(200)
+      expect(token).toBeDefined()
+      expect(refreshToken).toBeDefined()
+
+      const refreshTokenResponse = await request(app)
+        .post('/api/v1/auth/refresh-token')
+        .set('Cookie', `refresh-token=${refreshToken}`)
+
+      newToken = refreshTokenResponse.body.token
+
+      expect(refreshTokenResponse.status).toBe(200)
+      expect(newToken).toBeDefined()
+    })
+
+    it('and the new token should be valid', async () => {
+      expect(newToken).not.toBe(token)
+      expect(() => jwt.verify(newToken, process.env.JWT_SECRET)).not.toThrowError()
+    })
+  })
+})
