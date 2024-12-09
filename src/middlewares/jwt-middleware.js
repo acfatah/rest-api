@@ -19,6 +19,9 @@ const secret = process.env.JWT_SECRET
 export const jwtMiddleware = expressjwt({
   secret,
   algorithms: ['HS256'],
+  onExpired: async (req, err, res) => {
+    return res.status(401).json({ message: 'Token expired' })
+  },
 })
 
 export function jwtErrorHandler(error, req, res, next) {

@@ -15,7 +15,7 @@ router.post('/login', (req, res) => {
   if (authResult) {
     const { token, refreshToken } = authResult
 
-    res.cookie('refreshToken', refreshToken, {
+    res.cookie('refresh-token', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
@@ -28,11 +28,11 @@ router.post('/login', (req, res) => {
 })
 
 router.post('/refresh-token', (req, res) => {
-  const refreshToken = req.cookies.refreshToken
+  const refreshToken = req.cookies['refresh-token']
 
   try {
-    const user = verifyRefreshToken(refreshToken)
-    const newToken = generateAccessToken(user.username)
+    const { iat, exp, ...payload } = verifyRefreshToken(refreshToken)
+    const newToken = generateAccessToken(payload)
 
     res.json({ token: newToken })
   }

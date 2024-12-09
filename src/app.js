@@ -1,4 +1,5 @@
 import compression from 'compression'
+import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import express from 'express'
 import helmet from 'helmet'
@@ -32,6 +33,9 @@ app.use(compression())
 // enable cors
 app.use(cors())
 app.options('*', cors())
+
+// parse cookie
+app.use(cookieParser())
 
 app.use(routes)
 
